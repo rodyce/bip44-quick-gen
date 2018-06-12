@@ -1,5 +1,6 @@
 #include <bitcoin/bitcoin.hpp>
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 #include "coin_data.h"
 
 #define BIP_NUMBER 44
@@ -21,14 +22,18 @@ int main(int argc, char* argv[]) {
         coin.get_public_key_prefix());
 
     wallet::word_list mnemonic_words;
+    std::string input_words;
 
-    // std::cout << "Enter mnemonic (empty to autogenerate): "
-    // std::getline(cin, mnemonic_words);
-
-    data_chunk my_entropy(32);
-    pseudo_random_fill(my_entropy);
-    mnemonic_words = wallet::create_mnemonic(my_entropy);
-    std::cout << boost::format("// %s") % bc::join(mnemonic_words) << std::endl;
+    std::cout << "Enter mnemonic (empty to autogenerate): ";
+    std::getline(cin, input_words);
+    if (input_words == "") {
+        data_chunk my_entropy(32);
+        pseudo_random_fill(my_entropy);
+        mnemonic_words = wallet::create_mnemonic(my_entropy);
+        std::cout << boost::format("// %s") % bc::join(mnemonic_words) << std::endl;
+    } else {
+        boost::split(mnemonic_words, input_words, boost::is_space());
+    }
 
     auto hd_seed = wallet::decode_mnemonic(mnemonic_words);
     data_chunk seed_chunk(to_chunk(hd_seed));
