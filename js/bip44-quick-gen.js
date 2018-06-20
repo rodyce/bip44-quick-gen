@@ -2,8 +2,9 @@ var bitcore = require('bitcore-lib');
 var assert = require('assert')
 var Mnemonic = require('bitcore-mnemonic')
 
-words = "loyal excite family skirt wise impulse ripple host disorder stamp want casino method bracket step relax indicate night cool mixed harvest wire crazy survey"
+words = "asthma spot scene delay oval mansion apple narrow hour swing pet despair job fancy toilet race penalty athlete gap patrol impose olympic vendor alpha"
 
+//var code = new Mnemonic(256);
 var code = new Mnemonic(words);
 console.log(code.toString())
 

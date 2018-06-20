@@ -42,6 +42,7 @@ int main(int argc, char* argv[]) {
 
     wallet::hd_private m(seed_chunk, custom_key_prefixes);
     std::cout << "BIP32 Root Key: " << m << std::endl;
+    std::cout << "SECRET SIZE: " << m.secret().size() << std::endl;
     auto m_purpose = m.derive_private(wallet::hd_first_hardened_key + BIP_NUMBER);
     auto m_coin = m_purpose.derive_private(coin.bip44_id);
     auto m_account = m_coin.derive_private(wallet::hd_first_hardened_key + 0);
@@ -55,7 +56,7 @@ int main(int argc, char* argv[]) {
     std::cout << "BIP32 Extended Public Key:  " << m_ext.to_public() << std::endl;
     std::cout << std::endl;
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1000; i++) {
         auto mi = m_ext.derive_private(i);
         auto Mi = mi.to_public();
 
