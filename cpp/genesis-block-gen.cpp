@@ -2,6 +2,7 @@
 // Distributed under the Apache License Version 2.0
 
 #include <iostream>
+#include <fstream>
 #include <unordered_map>
 #include <string>
 #include <bitcoin/bitcoin.hpp>
@@ -13,20 +14,21 @@ using namespace bc;
 
 #define COIN 100000000 // 10**8
 #define DEFAULT_N_ACCOUNTS 4
-#define DEFAULT_TOTAL_WALLET_AMOUNT 2000
+#define DEFAULT_TOTAL_COINS 20000
 #define DEFAULT_N_COINS_PER_ACCOUNT 10
+#define OUT_MNEMONICS_FILE "mnemonics.txt"
 
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        std:cerr << "Syntax: wallet-get <coin> <net>" << std::endl;
+        std:cerr << "Syntax: wallet-get <coin> <net> [n_accounts] [total_coins] [n_coins_per_account]" << std::endl;
         return -1;
     }
     const char* coin_name = argv[1];
     const char* net = argv[2];
-    const auto n_accounts = argc > 3 ? atoi(argv[3]) : DEFAULT_N_ACCOUNTS;
-    const auto total_wallet_amount = argc > 4 ? atoi(argv[4]) : DEFAULT_TOTAL_WALLET_AMOUNT;
-    const auto n_coins_per_account = argc > 5 ? atoi(argv[5]) : DEFAULT_N_COINS_PER_ACCOUNT;
+    const int n_accounts = argc > 3 ? atoi(argv[3]) : DEFAULT_N_ACCOUNTS;
+    const int64_t total_coins = argc > 4 ? strtoll(argv[4], NULL, 10) : DEFAULT_TOTAL_COINS;
+    const int n_coins_per_account = argc > 5 ? atoi(argv[5]) : DEFAULT_N_COINS_PER_ACCOUNT;
 
     auto& coin = coin_data::get_coin_data(coin_name, net);
 
@@ -38,10 +40,14 @@ int main(int argc, char* argv[]) {
 
     data_chunk my_entropy(32);
 
+    std::ofstream out_mnemonics_file;
+    out_mnemonics_file.open(OUT_MNEMONICS_FILE);
     for (int i = 0; i < n_accounts; i++) {
         pseudo_random_fill(my_entropy);
         auto mnemonic_words = wallet::create_mnemonic(my_entropy);
-        std::cout << boost::format("// %s") % bc::join(mnemonic_words) << std::endl;
+        auto joined_mnemonic_words = bc::join(mnemonic_words);
+        out_mnemonics_file << joined_mnemonic_words << std::endl;
+        std::cout << boost::format("// %d") % (i+1) << std::endl;
 
         auto hd_seed = wallet::decode_mnemonic(mnemonic_words);
         data_chunk seed_chunk(to_chunk(hd_seed));
@@ -59,7 +65,8 @@ int main(int argc, char* argv[]) {
         std::cout << std::endl;
         std::cout << "Account extended PrvKey: " << m_account << std::endl;
         std::cout << "Account extended PubKey: " << m_account.to_public() << std::endl;
-        std::cout << std::endl;
+        std::cout << std::
+        endl;
         std::cout << "BIP32 Extended Private Key: " << m_ext << std::endl;
         std::cout << "BIP32 Extended Public Key:  " << m_ext.to_public() << std::endl;
         std::cout << std::endl;
@@ -85,10 +92,11 @@ int main(int argc, char* argv[]) {
             auto payment_addr = pv_key.to_payment_address();
             //std::cout << "Address: " << payment_addr.encoded() << std::endl;
 
+
             auto pubkey_hash = bitcoin_short_hash(mi.point());
             //std::cout << "Public Key HASH: " << encode_base16(pubkey_hash) << std::endl;
 
-            auto amount = (unsigned long)total_wallet_amount / n_coins_per_account;
+            auto amount = total_coins / n_accounts / n_coins_per_account;
             std::cout << boost::format("std::make_pair(\"%s\", %u * COIN),") % encode_base16(pubkey_hash) % (amount) << std::endl;
 
             //std::cout << std::endl;
@@ -96,6 +104,7 @@ int main(int argc, char* argv[]) {
 
         std::cout << std::endl;
     }
+    out_mnemonics_file.close();
 
     return 0;
 }

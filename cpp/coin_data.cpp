@@ -19,16 +19,16 @@ static std::map<coinnet_t, coin_data> coin_data_map {
     }},
     {{"efin", "testnet"}, {
         .pubkey_address = 0x5c, // e
-        .script_address = 0x3c, // TODO: define
-        .pubkey_address_256 = 0x39, // TODO: define
-        .script_address_256 = 0x3d, // TODO: define
+        .script_address = 0x7a,
+        .pubkey_address_256 = 0x77,
+        .script_address_256 = 0x7b,
         .secret_key = 0xfe, // e
         .ext_public_key = {0x04, 0x32, 0x4d, 0xe3}, // tfub
         .ext_secret_key = {0x04, 0x32, 0x46, 0x7f}, // tfpv
-        .stealth_address = 0x14, // TODO: define
-        .ext_key_hash = 0x4b, // X // TODO: define
-        .ext_acc_hash = 0x17, // A // TODO: define
-        .bip44_id = (1 << 31) + 0x01 // 1'
+        .stealth_address = 0x15, // T
+        .ext_key_hash = 0x89, // x
+        .ext_acc_hash = 0x53, // a
+        .bip44_id = (1 << 31) + 3715 // 3715'
     }},
     {{"particl", "mainnet"}, {
         .pubkey_address = 0x38, // P

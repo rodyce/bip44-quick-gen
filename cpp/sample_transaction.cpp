@@ -14,8 +14,6 @@ using namespace machine;
 
 void build_transaction(const wallet::hd_private& hd_deriver_key, const coin_data& coin) {
 
-    auto derived0 = hd_deriver_key.derive_private(0);
-    auto sig = derived0.secret();
     //derived0.
 
     // ******* part 1 *******
@@ -31,7 +29,7 @@ void build_transaction(const wallet::hd_private& hd_deriver_key, const coin_data
 
     // Print version in serialised format.
     auto serialised_version = to_little_endian(tx.version());
-    std::cout << encode_base16(to_chunk(serialised_version));
+    std::cout << encode_base16(to_chunk(serialised_version)) << std::endl;
 
     //******* part 3 *******
 
@@ -41,7 +39,7 @@ void build_transaction(const wallet::hd_private& hd_deriver_key, const coin_data
     decode_hash(prev_tx_hash_0, prev_tx_string_0);
 
     // Previous UXTO index.
-    uint32_t index0 = 0;
+    uint32_t index0 = 9;
     output_point uxto_tospend_0(prev_tx_hash_0, index0);
 
     // Build input_0 object.
@@ -88,8 +86,8 @@ void build_transaction(const wallet::hd_private& hd_deriver_key, const coin_data
     // Above can be repeated for other outputs
 
     // Add outputs to TX
-    tx.outputs().push_back(output_0);     //first output
     tx.outputs().push_back(output_1);     //first output
+    tx.outputs().push_back(output_0);     //first output
     // tx.outputs().push_back(output_1);   //second output
     // tx.outputs().push_back(output_n);   //...nth output
 
@@ -111,11 +109,14 @@ void build_transaction(const wallet::hd_private& hd_deriver_key, const coin_data
 
     // Signer: Secret > Pubkey > Address
     //sig.
+    auto derived0 = hd_deriver_key.derive_private(0);
+    auto sig = derived0.secret();
     ec_private my_private0(sig, ec_private::to_version(
                 coin.pubkey_address, coin.secret_key), true);
     ec_compressed pubkey0= my_private0.to_public().point();
     payment_address my_address0 = my_private0.to_payment_address();
 
+    std::cout << "PRIVATE KEY: " << my_private0 << std::endl;
     std::cout << "PAYMENT ADDRESS: " << my_address0 << std::endl;
 
     // Signature
@@ -123,7 +124,7 @@ void build_transaction(const wallet::hd_private& hd_deriver_key, const coin_data
     script prev_script_0 = script::to_pay_key_hash_pattern(my_address0.hash());
     uint8_t input0_index(0u);
     script::create_endorsement(sig_0, sig, prev_script_0, tx,
-        input0_index, 0x01);
+        input0_index, 0x01, script_version::zero);
 
     // Create input script
     operation::list sig_script_0;
@@ -135,12 +136,14 @@ void build_transaction(const wallet::hd_private& hd_deriver_key, const coin_data
 
     // Add input script to first input in transaction
     //tx.inputs()[0].set_script(my_input_script_0);
-    chain::witness w(my_input_script_0.to_data(true), true);
+
+    chain::witness w(my_input_script_0.to_data(false), false);
     std::cout << "WITNESS: " << w.to_string() << std::endl;
-    tx.inputs()[0].set_witness(w);
+    //tx.inputs()[0].set_witness(w);
+
 
     // Print serialised transaction
-    std::cout << encode_base16(tx.to_data()) << std::endl;
+    std::cout << encode_base16(tx.to_data(true, true)) << std::endl;
 
 }
 
