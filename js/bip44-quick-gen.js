@@ -29,7 +29,7 @@ rl.on('line', function(words) {
                     xpubkey: 0x011c3bed,
                     xprivkey: 0x011c3488
                 },
-                bip44_id: 144
+                bip44_id: 3714 // 3714'
             }
             
         }
@@ -49,7 +49,8 @@ rl.on('line', function(words) {
         .derive(0);
 
     for (var i = 0; i < 10; i++) {
-        var privKey = derivationPath.derive(i).privateKey;
+        var myPath = derivationPath.derive(i)
+        var privKey = myPath.privateKey;
         var pubKey = privKey.toPublicKey();
         var address = privKey.toAddress();
         console.log(address.toString());

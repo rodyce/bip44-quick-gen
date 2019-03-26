@@ -2,7 +2,7 @@
 
 ### Compile with C++11, boost and libbitcoin:
 
-* g++ -std=c++11 bip44-quick-gen.cpp -o bip44-quick-gen -lbitcoin -lboost_system
+* g++ -std=c++11 bip44-quick-gen.cpp coin_data.cpp -o bip44-quick-gen -lbitcoin -lboost_system
 
 ### Execute like this:
 
