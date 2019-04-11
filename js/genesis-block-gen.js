@@ -5,30 +5,11 @@ const ripemd160 = require('ripemd160');
 
 const bitcore = require('bitcore-lib');
 const Mnemonic = require('bitcore-mnemonic')
-
-
-const coin_data = {
-    "efin": {
-        "mainnet": {
-            network_data: {
-                name: "efin/mainnet",
-                alias: "efin livenet",
-    
-                pubkeyhash: 0x21,
-                privatekey: 0x5c,
-                scripthash: 0x3c,
-                xpubkey: 0x011c3bed,
-                xprivkey: 0x011c3488
-            },
-            bip44_id: 3714 // 3714'
-        }
-        
-    }
-}
+const coin_data = require('./coin-data.js').coin_data
 
 desired_coin_data = coin_data["efin"]
 
-bitcore.Networks.add(desired_coin_data["mainnet"].network_data);
+bitcore.Networks.add(desired_coin_data["testnet"].network_data);
 
 if (process.argv.length < 6) {
     console.log("Syntax: genesis-block-gen.js <total_coin_supply> <n_accounts> <n_coins_per_account> <out_file>")
@@ -45,13 +26,13 @@ const amount = total_coin_supply / n_accounts / n_coins_per_account;
 for (var j = 0; j < n_accounts; j++) {
     var code = new Mnemonic(256);
     fs.writeFileSync(out_file, code.toString() + "\n", {flag: 'a'});
-    var hdPrivateKey = code.toHDPrivateKey("", "efin/mainnet"); // empty passphrase
+    var hdPrivateKey = code.toHDPrivateKey("", "efin/testnet"); // empty passphrase
 
     //console.log("BIP32 Root Key: " + hdPrivateKey.toString())
     console.log(`// ${j+1}`);
     var derivationPath = hdPrivateKey
         .derive(44, true)
-        .derive(coin_data["efin"]["mainnet"].bip44_id, true)
+        .derive(coin_data["efin"]["testnet"].bip44_id, true)
         .derive(0, true)
         .derive(0);
     for (var i = 0; i < n_coins_per_account; i++) {

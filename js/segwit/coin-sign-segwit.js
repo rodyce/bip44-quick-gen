@@ -1,45 +1,36 @@
 const bitcore = require('bitcore-mnemonic/node_modules/particl-bitcore-lib');
 const Mnemonic = require('bitcore-mnemonic')
 const assert = require('assert')
-
+const coin_data = require('../coin-data').coin_data
 const COIN = 100000000
 
-words = "kit youth enroll gravity inform coil life response over collect shrimp fashion desk million differ style october hill first fiscal reform among fiscal word"
+words = "march hour rabbit response desk exhaust feel intact brother ecology put lamp maze apology then ranch reward loud suffer bitter memory siege glimpse tray"
 
 var code = new Mnemonic(words);
 console.log(code.toString())
 
-coin_data = {
-    "efin": {
-        "mainnet": {
-            network_data: {
-                name: "efin/mainnet",
-                alias: "efin livenet",
-                pubkeyhash: 0x21,
-                privatekey: 0x5c,
-                scripthash: 0x3c,
-                xpubkey: 0x011c3bed,
-                xprivkey: 0x011c3488
-            },
-            bip44_id: 144
-        }
-        
-    }
-}
-
 desired_coin_data = coin_data["efin"]
 
-bitcore.Networks.add(desired_coin_data["mainnet"].network_data);
+bitcore.Networks.add(desired_coin_data["testnet"].network_data);
 
-var hdPrivateKey = code.toHDPrivateKey("", "efin/mainnet"); // empty passphrase
+var hdPrivateKey = code.toHDPrivateKey("", "efin/testnet"); // empty passphrase
 
 console.log("BIP32 Root Key: " + hdPrivateKey.toString())
 var derivationPath = hdPrivateKey
     .derive(44, true)
-    .derive(coin_data["efin"]["mainnet"].bip44_id, true)
+    .derive(coin_data["efin"]["testnet"].bip44_id, true)
     .derive(0, true)
     .derive(0);
 
+for (var i = 0; i < 10; i++) {
+    var myPath = derivationPath.derive(i)
+    var privKey = myPath.privateKey;
+    var pubKey = privKey.toPublicKey();
+    var address = privKey.toAddress();
+    console.log(address.toString());
+    //console.log("    " + pubKey.toString() + ", " + privKey.toString());
+    //console.log(privKey.toWIF());
+}
 
 
 console.log("=====================")
@@ -68,8 +59,8 @@ for (var i = 0; i < 10; i++) {
 
 var bitcore_tx = new bitcore.Transaction()
     .from(utxo)
-    .to(bitcore.Address.fromString("EKLiqAS8154uEEtRGHZ4PJax64o4nC5Jgw", "efin/mainnet"), 15 * COIN)
-    .change(bitcore.Address.fromString("EarTiDEmacVgSfFkukqUFBmseeHBCLdrs8", "efin/mainnet"))
+    .to(bitcore.Address.fromString("EKLiqAS8154uEEtRGHZ4PJax64o4nC5Jgw", "efin/testnet"), 15 * COIN)
+    .change(bitcore.Address.fromString("EarTiDEmacVgSfFkukqUFBmseeHBCLdrs8", "efin/testnet"))
     .fee(34600)
 
 const tx_before_sign = bitcore_tx.toString();

@@ -38,7 +38,8 @@ int main(int argc, char* argv[]) {
     auto hd_seed = wallet::decode_mnemonic(mnemonic_words);
     data_chunk seed_chunk(to_chunk(hd_seed));
 
-    std::cout << "seed: " << encode_base16(hd_seed) << std::endl;
+    std::cout << "seed:           " << encode_base16(hd_seed) << std::endl;
+    std::cout << "seed (base 58): " << encode_base58(hd_seed) << std::endl;
 
     wallet::hd_private m(seed_chunk, custom_key_prefixes);
     std::cout << "BIP32 Root Key: " << m << std::endl;
@@ -56,7 +57,7 @@ int main(int argc, char* argv[]) {
     std::cout << "BIP32 Extended Public Key:  " << m_ext.to_public() << std::endl;
     std::cout << std::endl;
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 10; i++) {
         auto mi = m_ext.derive_private(i);
         auto Mi = mi.to_public();
 
