@@ -12,23 +12,26 @@ const rl = readline.createInterface({
 })
 
 rl.on('line', function(words) {
+    var code;
     if (words.trim().length == 0) {
         // Create random words
+        code = new Mnemonic(256);
+    } else {
+        code = new Mnemonic(words);
     }
-    var code = new Mnemonic(256);
     //var code = new Mnemonic(words);
     console.log(code.toString())
 
-    desired_coin_data = coin_data["tpay"]
+    desired_coin_data = coin_data["efin"]
 
     bitcore.Networks.add(desired_coin_data["mainnet"].network_data);
 
-    var hdPrivateKey = code.toHDPrivateKey("", "tpay/mainnet"); // empty passphrase
+    var hdPrivateKey = code.toHDPrivateKey("", "efin/mainnet"); // empty passphrase
 
     console.log("BIP32 Root Key: " + hdPrivateKey.toString())
     var derivationPath = hdPrivateKey
-        .derive(44, true)
-        .derive(coin_data["tpay"]["mainnet"].bip44_id, true)
+        .derive(44, true) // 44'
+        .derive(coin_data["efin"]["mainnet"].bip44_id, true)
         .derive(0, true)
         .derive(0);
 
@@ -37,12 +40,15 @@ rl.on('line', function(words) {
         var privKey = myPath.privateKey;
         var pubKey = privKey.toPublicKey();
         var address = privKey.toAddress();
-        console.log(address.toString());
+
+        console.log(`${i} - ${address.toString()}`);
+        /*
         console.log("    " + pubKey.toString() + ", " + privKey.toString());
         console.log(privKey.toWIF());
-        var script = bitcore.Script.buildPublicKeyHashOut(address);
+        */
+        //var script = bitcore.Script.buildPublicKeyHashOut(address);
         
-        console.log("SCRIPT: " + script.toHex());
+        //console.log("SCRIPT: " + script.toHex());
     }
 })
 
