@@ -1,0 +1,20 @@
+{
+  "name": "bip44-quick-gen",
+  "version": "0.1.0",
+  "description": "BIP44 address generation",
+  "main": "bip44-quick-gen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blockchain",
+    "utxo",
+    "address",
+    "recovery"
+  ],
+  "author": "Rodimiro Cerrato E",
+  "license": "ISC",
+  "dependencies": {
+    "bitcore-mnemonic": "^1.5.0"
+  }
+}
